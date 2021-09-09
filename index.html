@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>01 Draggable | jQuery UI / Drag and Drop</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+  <script src="./js/html2canvas.js"></script>
+  <link rel="stylesheet" href="./css/jquery-ui.css">
 </head>
 <body>
 <style>
@@ -19,6 +20,11 @@
   }
   .item:hover {
     cursor: pointer;
+  }
+  #area{
+      height: 500px;
+      width: 500px;
+      border: solid;
   }
 </style>
 
@@ -36,11 +42,20 @@
     $('#appendButton').on('click', function(){
         $('<img src="./img/youtuber.png" alt="youtuber"></img>').draggable().appendTo('#base');
     })
+    $('#download-btn').on('click', function(){
+      html2canvas(document.querySelector("#area")).then(canvas => { 
+      let downloadEle = document.createElement("a");
+      downloadEle.href = canvas.toDataURL("image/png");
+      downloadEle.download = "canvas.png";
+      downloadEle.click();
+    });
+  })
+  $("#area").resizable();
   });
-</script>
-
+</script> 
+<input id="download-btn" type="button" value="download image">
+<button id="appendButton">ADDIMAGE</button>
 <div id="area">
-    <button id="appendButton">ADDIMAGE</button>
     <p id="base"></p>
 </div>
 </body>
