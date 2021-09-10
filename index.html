@@ -65,16 +65,16 @@ return result;
     });
   })
   $("#area").resizable();
-    $('#appendButton').on('click', function(){
-//        $('<div class="icon"><img src="./img/youtuber.png" alt="youtuber" class="icon-img"></img></div>').appendTo('#area').draggable().resizable();
-//        $('<div class="backgray">aaa</div>').draggable().appendTo('#area')
+    $('.appendImg').on('click', function(){
+
         var tmpStr = getRandStr();
+        var ImgId = $(this).attr('id');
 
         var parentId= "img-window-" + tmpStr
         var childId = "img-" + tmpStr
 
         var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
-        var childimg = $('<img id="' + childId + '" src="./img/youtuber.png" alt="youtuber" class="icon"></img>').appendTo("#" + parentId)
+        var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="youtuber" class="icon"></img>').appendTo("#" + parentId)
 
         $('#' + parentId).draggable({
             create: function() {
@@ -101,7 +101,8 @@ return result;
   });
 </script> 
 <input id="download-btn" type="button" value="download image">
-<button id="appendButton">ADDIMAGE</button>
+<button class="appendImg" id="ec2">EC2</button>
+<button class="appendImg" id="Aurora">Aurora</button>
 <div id="area"class="ui-widget-content">
 </div>
 
