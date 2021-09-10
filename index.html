@@ -1,178 +1,188 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>01 Draggable | jQuery UI / Drag and Drop</title>
-  <script src="./js/html2canvas.js"></script>
-  <link rel="stylesheet" href="./css/jquery-ui.css">
+    <meta charset="UTF-8">
+    <title>AWS Architecture Draw</title>
+    <script src="./js/jquery.js"></script>
+    <script src="./js/jquery-ui.js"></script>
+    <script src="./js/html2canvas.js"></script>
+    <link rel="stylesheet" href="./css/jquery-ui.css">
 </head>
 <body>
 <style>
   body {
     margin: 20px;
   }
-  .item {
-    padding: 10px;
-    width: 80px;
-    height: 80px;
-    background-color: #2e6da4;
-    color: #FFFFFF;
-  }
-  .item:hover {
+  .icon{
+    height:100px;
+    width:100px;
     cursor: pointer;
   }
-  .icon{
-      height:100px;
-      width:100px;
-  }
   #area{
-      height: 500px;
-      width: 500px;
-      border: solid;
+    height: 500px;
+    width: 500px;
+    border: solid;
   }
 </style>
 
-<div id="container">
-  <div class="item">
-    <p>ドラッグしてください</p>
-  </div>
-</div>
-
-<script src="./js/jquery.js"></script>
-<script src="./js/jquery-ui.js"></script>
 <script>
 
-    function getRandStr(){
-        var len = 8;
-var str = "abcdefghijklmnopqrstuvwxyz";
-var strLen = str.length;
-var result = "";
- 
-for (var i = 0; i < len; i++) {
-  result += str[Math.floor(Math.random() * strLen)];
-}
- 
-return result;
+function getRandStr(){
+    //get random str
+    var len = 8;
+    var str = "abcdefghijklmnopqrstuvwxyz";
+    var strLen = str.length;
+    var result = "";
+
+    for (var i = 0; i < len; i++) {
+    result += str[Math.floor(Math.random() * strLen)];
     }
-  $(function() {
-    $('.item').draggable();
+    return result;
+}
+
+$(function() {
+    // Download Image function
     $('#download-btn').on('click', function(){
-      html2canvas(document.querySelector("#area")).then(canvas => { 
-      let downloadEle = document.createElement("a");
-      downloadEle.href = canvas.toDataURL("image/png");
-      downloadEle.download = "canvas.png";
-      downloadEle.click();
+    html2canvas(document.querySelector("#area")).then(canvas => { 
+    let downloadEle = document.createElement("a");
+    downloadEle.href = canvas.toDataURL("image/png");
+    downloadEle.download = "canvas.png";
+    downloadEle.click();
     });
-  })
-  $("#area").resizable();
-    $('.appendImg').on('click', function(){
+})
 
-        var tmpStr = getRandStr();
-        var ImgId = $(this).attr('id');
+// Area resizable
+$("#area").resizable();
+$('.appendImg').on('click', function(){
 
-        var parentId= "img-window-" + tmpStr
-        var childId = "img-" + tmpStr
+    // random id get
+    var tmpStr = getRandStr();
+    // Get Image id (ex: ec2)
+    var ImgId = $(this).attr('id');
 
-        var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
-        var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="' + ImgId +'" class="icon"></img>').appendTo("#" + parentId)
+    // Set id
+    var parentId= "img-window-" + tmpStr
+    var childId = "img-" + tmpStr
 
-        $('#' + parentId).draggable({
-            create: function() {
-            // 生成されたときにdivのサイズとimgのサイズを合わせる
-            var $win = $('#' + parentId);
-            var $img  = $('#' + childId);
-            $win.css({
-                width : $img.css('width'),
-                height: $img.css('height')
-            });
-        }
+    // Create element
+    var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
+    var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="' + ImgId +'" class="icon"></img>').appendTo("#" + parentId)
 
-        }).resizable({
-            handles: 'se,ne,sw,nw',
-            aspectRatio: true,
-            alsoResize: $('#' + childId)
-        })
-
-        $("#" + parentId).dblclick(function(){
-            $("#" + parentId).remove();
-        })
-
-    })
-
-    $("#outputData").on("click", function(){
-        const areaData= [];
-
-        $('#area .ui-draggable').each(function(i){
-            var id = $(this).attr('id');
-            var parentId = $(this).attr('id').replace("-window","")
-            var width = $(this).css('width');
-            var height = $(this).css('height');
-            var left = $(this).css('left');
-            var top = $(this).css('top');
-            var alt = $('#' + parentId).attr('alt');
-            console.log(id)
-            areaData.push({ id: id, parendId: parentId, width: width, height: height, left: left, top: top, alt: alt})
+    // Configure draggable
+    $('#' + parentId).draggable({
+        create: function() {
+        // 生成されたときにdivのサイズとimgのサイズを合わせる
+        var $win = $('#' + parentId);
+        var $img  = $('#' + childId);
+        $win.css({
+            width : $img.css('width'),
+            height: $img.css('height')
         });
+    }
 
-        $('#areaOutputData').val(JSON.stringify(areaData));
+    // Configure resizable
+    }).resizable({
+        handles: 'se,ne,sw,nw',
+        aspectRatio: true,
+        // POINT: AlsoResize
+        alsoResize: $('#' + childId)
     })
 
-    $("#inputData").on("click", function(){
-        const areaData = JSON.parse($('#areaInputData').val());
-        console.log(areaData)
-
-        $.each(areaData, function(index, val){
-            console.log(val.id);
-
-        var ImgId = val.alt;
-        var parentId= val.id
-        var childId = val.parentId
-
-        var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
-        var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="' + ImgId +'" class="icon"></img>').appendTo("#" + parentId)
-
-        $('#' + parentId).draggable({
-            create: function() {
-            // 生成されたときにdivのサイズとimgのサイズを合わせる
-            var $win = $('#' + parentId);
-            var $img  = $('#' + childId);
-            $win.css({
-                width : $img.css('width'),
-                height: $img.css('height')
-            });
-        }
-
-        }).resizable({
-            handles: 'se,ne,sw,nw',
-            aspectRatio: true,
-            alsoResize: $('#' + childId)
-        })
-
-        $("#" + parentId).dblclick(function(){
-            $("#" + parentId).remove();
-        })
-
-        $('#' + parentId).css('top', val.top);
-        $('#' + parentId).css('height', val.height);
-        $('#' + parentId).css('left', val.left);
-        $('#' + parentId).css('width', val.width);
+    // Set Double click delete event
+    $("#" + parentId).dblclick(function(){
+        $("#" + parentId).remove();
     })
 
+})
+
+$("#outputData").on("click", function(){
+    // Output Data ( Save Data )
+    const areaData= [];
+
+    // Get element data
+    $('#area .ui-draggable').each(function(i){
+        var id = $(this).attr('id');
+        var parentId = $(this).attr('id').replace("-window","")
+        var width = $(this).css('width');
+        var height = $(this).css('height');
+        var left = $(this).css('left');
+        var top = $(this).css('top');
+        var alt = $('#' + parentId).attr('alt');
+        console.log(id)
+        areaData.push({ id: id, parendId: parentId, width: width, height: height, left: left, top: top, alt: alt})
+    });
+
+    // Output data
+    $('#areaOutputData').val(JSON.stringify(areaData));
+})
+
+$("#inputData").on("click", function(){
+    // Input Data ( Load Data )
+    const areaData = JSON.parse($('#areaInputData').val());
+
+    // Set Element data
+    $.each(areaData, function(index, val){
+        console.log(val.id);
+
+    var ImgId = val.alt;
+    var parentId= val.id
+    var childId = val.parentId
+
+    var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
+    var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="' + ImgId +'" class="icon"></img>').appendTo("#" + parentId)
+
+    $('#' + parentId).draggable({
+        create: function() {
+        // 生成されたときにdivのサイズとimgのサイズを合わせる
+        var $win = $('#' + parentId);
+        var $img  = $('#' + childId);
+        $win.css({
+            width : $img.css('width'),
+            height: $img.css('height')
+        });
+    }
+
+    }).resizable({
+        handles: 'se,ne,sw,nw',
+        aspectRatio: true,
+        alsoResize: $('#' + childId)
     })
-  });
+
+    $("#" + parentId).dblclick(function(){
+        $("#" + parentId).remove();
+    })
+
+    // Set position
+    $('#' + parentId).css('top', val.top);
+    $('#' + parentId).css('height', val.height);
+    $('#' + parentId).css('left', val.left);
+    $('#' + parentId).css('width', val.width);
+})
+
+})
+});
 </script> 
 <input id="download-btn" type="button" value="download image">
-<input id="outputData" type="button" value="output">
-<button class="appendImg" id="ec2">EC2</button>
-<button class="appendImg" id="Aurora">Aurora</button>
+<table style="border: solid">
+    <tr>
+        <th>EC2</th>
+        <th>Aurora</th>
+    </tr>
+    <tr>
+        <td><img src="./img/ec2.png" class="appendImg icon" id="ec2"></td>
+        <td><img src="./img/Aurora.png" class="appendImg icon" id="aurora"></td>
+    </tr>
+</table>
+<br>
 <div id="area"class="ui-widget-content">
 </div>
 <h1>OUTPUTDATA</h1><br>
 <textarea id="areaOutputData"></textarea><br>
+<input id="outputData" type="button" value="output"><br>
 <br>
 <h1>INPUTDATA</h1><br>
 <textarea id="areaInputData"></textarea><br>
-<input id="inputData" type="button" value="output">
+<input id="inputData" type="button" value="input"><br>
 
 </body>
 </html>
