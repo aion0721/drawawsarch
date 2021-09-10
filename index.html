@@ -25,20 +25,10 @@
       height:100px;
       width:100px;
   }
-  .icon-img{
-      height: 100px;
-      width: 100px;
-  }
   #area{
       height: 500px;
       width: 500px;
       border: solid;
-  }
-  .backgrey{
-      height: 100px;
-      width: 100px;
-      background-color: gray;
-      position: absolute;
   }
 </style>
 
@@ -101,6 +91,10 @@ return result;
             handles: 'se,ne,sw,nw',
             aspectRatio: true,
             alsoResize: $('#' + childId)
+        })
+
+        $("#" + parentId).dblclick(function(){
+            $("#" + parentId).remove();
         })
 
     })
