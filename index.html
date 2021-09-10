@@ -21,10 +21,24 @@
   .item:hover {
     cursor: pointer;
   }
+  .icon{
+      height:100px;
+      width:100px;
+  }
+  .icon-img{
+      height: 100px;
+      width: 100px;
+  }
   #area{
       height: 500px;
       width: 500px;
       border: solid;
+  }
+  .backgrey{
+      height: 100px;
+      width: 100px;
+      background-color: gray;
+      position: absolute;
   }
 </style>
 
@@ -37,11 +51,21 @@
 <script src="./js/jquery.js"></script>
 <script src="./js/jquery-ui.js"></script>
 <script>
+
+    function getRandStr(){
+        var len = 8;
+var str = "abcdefghijklmnopqrstuvwxyz";
+var strLen = str.length;
+var result = "";
+ 
+for (var i = 0; i < len; i++) {
+  result += str[Math.floor(Math.random() * strLen)];
+}
+ 
+return result;
+    }
   $(function() {
     $('.item').draggable();
-    $('#appendButton').on('click', function(){
-        $('<img src="./img/youtuber.png" alt="youtuber"></img>').draggable().appendTo('#base');
-    })
     $('#download-btn').on('click', function(){
       html2canvas(document.querySelector("#area")).then(canvas => { 
       let downloadEle = document.createElement("a");
@@ -51,12 +75,41 @@
     });
   })
   $("#area").resizable();
+    $('#appendButton').on('click', function(){
+//        $('<div class="icon"><img src="./img/youtuber.png" alt="youtuber" class="icon-img"></img></div>').appendTo('#area').draggable().resizable();
+//        $('<div class="backgray">aaa</div>').draggable().appendTo('#area')
+        var tmpStr = getRandStr();
+
+        var parentId= "img-window-" + tmpStr
+        var childId = "img-" + tmpStr
+
+        var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
+        var childimg = $('<img id="' + childId + '" src="./img/youtuber.png" alt="youtuber" class="icon"></img>').appendTo("#" + parentId)
+
+        $('#' + parentId).draggable({
+            create: function() {
+            // 生成されたときにdivのサイズとimgのサイズを合わせる
+            var $win = $('#' + parentId);
+            var $img  = $('#' + childId);
+            $win.css({
+                width : $img.css('width'),
+                height: $img.css('height')
+            });
+        }
+
+        }).resizable({
+            handles: 'se,ne,sw,nw',
+            aspectRatio: true,
+            alsoResize: $('#' + childId)
+        })
+
+    })
   });
 </script> 
 <input id="download-btn" type="button" value="download image">
 <button id="appendButton">ADDIMAGE</button>
-<div id="area">
-    <p id="base"></p>
+<div id="area"class="ui-widget-content">
 </div>
+
 </body>
 </html>
