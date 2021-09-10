@@ -74,7 +74,7 @@ return result;
         var childId = "img-" + tmpStr
 
         var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
-        var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="youtuber" class="icon"></img>').appendTo("#" + parentId)
+        var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="' + ImgId +'" class="icon"></img>').appendTo("#" + parentId)
 
         $('#' + parentId).draggable({
             create: function() {
@@ -98,13 +98,37 @@ return result;
         })
 
     })
+
+    $("#outputData").on("click", function(){
+        const areaData= [];
+
+        $('#area .ui-draggable').each(function(i){
+            var id = $(this).attr('id');
+            var parentId = $(this).attr('id').replace("-window","")
+            var width = $(this).css('width');
+            var height = $(this).css('height');
+            var left = $(this).css('left');
+            var top = $(this).css('top');
+            var alt = $('#' + parentId).attr('alt');
+            console.log(id)
+            areaData.push({ id: id, parendId: parentId, width: width, height: height, left: left, top: top, alt: alt})
+        });
+
+        $('#areaOutputData').val(JSON.stringify(areaData));
+    })
   });
 </script> 
 <input id="download-btn" type="button" value="download image">
+<input id="outputData" type="button" value="output">
 <button class="appendImg" id="ec2">EC2</button>
 <button class="appendImg" id="Aurora">Aurora</button>
 <div id="area"class="ui-widget-content">
 </div>
+<h1>OUTPUTDATA</h1><br>
+<textarea id="areaOutputData"></textarea><br>
+<br>
+<h1>INPUTDATA</h1><br>
+<textarea id="areaInputData"></textarea><br>
 
 </body>
 </html>
