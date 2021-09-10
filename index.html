@@ -116,6 +116,49 @@ return result;
 
         $('#areaOutputData').val(JSON.stringify(areaData));
     })
+
+    $("#inputData").on("click", function(){
+        const areaData = JSON.parse($('#areaInputData').val());
+        console.log(areaData)
+
+        $.each(areaData, function(index, val){
+            console.log(val.id);
+
+        var ImgId = val.alt;
+        var parentId= val.id
+        var childId = val.parentId
+
+        var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
+        var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="' + ImgId +'" class="icon"></img>').appendTo("#" + parentId)
+
+        $('#' + parentId).draggable({
+            create: function() {
+            // 生成されたときにdivのサイズとimgのサイズを合わせる
+            var $win = $('#' + parentId);
+            var $img  = $('#' + childId);
+            $win.css({
+                width : $img.css('width'),
+                height: $img.css('height')
+            });
+        }
+
+        }).resizable({
+            handles: 'se,ne,sw,nw',
+            aspectRatio: true,
+            alsoResize: $('#' + childId)
+        })
+
+        $("#" + parentId).dblclick(function(){
+            $("#" + parentId).remove();
+        })
+
+        $('#' + parentId).css('top', val.top);
+        $('#' + parentId).css('height', val.height);
+        $('#' + parentId).css('left', val.left);
+        $('#' + parentId).css('width', val.width);
+    })
+
+    })
   });
 </script> 
 <input id="download-btn" type="button" value="download image">
@@ -129,6 +172,7 @@ return result;
 <br>
 <h1>INPUTDATA</h1><br>
 <textarea id="areaInputData"></textarea><br>
+<input id="inputData" type="button" value="output">
 
 </body>
 </html>
