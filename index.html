@@ -23,6 +23,11 @@
     width: 500px;
     border: solid;
   }
+  #trashArea{
+      width: 300px;
+      height: 100px;
+      background-color: gray;
+  }
 </style>
 
 <script>
@@ -67,6 +72,46 @@ $('.appendImg').on('click', function(){
     // Create element
     var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
     var childimg = $('<img id="' + childId + '" src="./img/' + ImgId  +'.png" alt="' + ImgId +'" class="icon"></img>').appendTo("#" + parentId)
+
+    // Configure draggable
+    $('#' + parentId).draggable({
+        create: function() {
+        // 生成されたときにdivのサイズとimgのサイズを合わせる
+        var $win = $('#' + parentId);
+        var $img  = $('#' + childId);
+        $win.css({
+            width : $img.css('width'),
+            height: $img.css('height')
+        });
+    }
+
+    // Configure resizable
+    }).resizable({
+        handles: 'se,ne,sw,nw',
+        aspectRatio: true,
+        // POINT: AlsoResize
+        alsoResize: $('#' + childId)
+    })
+
+    // Set Double click delete event
+    $("#" + parentId).dblclick(function(){
+        $("#" + parentId).remove();
+    })
+
+})
+
+$('#appendTxt').on('click', function(){
+
+    // random id get
+    var tmpStr = getRandStr();
+
+    // Set id
+    var parentId= "img-window-" + tmpStr
+    var childId = "img-" + tmpStr
+
+    // Create element
+    var parentdiv = $('<div id="' + parentId + '"></div>').appendTo("#area")
+    var childimg = $('<textarea id="' + childId + '"  class="icon">TEXT!</textarea>').appendTo("#" + parentId)
 
     // Configure draggable
     $('#' + parentId).draggable({
@@ -160,9 +205,16 @@ $("#inputData").on("click", function(){
 })
 
 })
+
+    $("#trashArea").droppable({
+        drop: function(event, ui){
+            $("#" + ui.draggable.attr("id")).remove();
+        }
+    })
 });
 </script> 
 <input id="download-btn" type="button" value="download image">
+<input id="appendTxt" type="button" value="AppendText">
 <table style="border: solid">
     <tr>
         <th>EC2</th>
@@ -176,6 +228,7 @@ $("#inputData").on("click", function(){
 <br>
 <div id="area"class="ui-widget-content">
 </div>
+<div id="trashArea">TRASH</div>
 <h1>OUTPUTDATA</h1><br>
 <textarea id="areaOutputData"></textarea><br>
 <input id="outputData" type="button" value="output"><br>
